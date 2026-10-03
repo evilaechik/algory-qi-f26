@@ -28,6 +28,15 @@ class Checker:
             detail = traceback.format_exc().strip().split("\n")[-1]
         self.results.append((name, ok, detail, note))
 
+    def assert_true(self, name, fn, note=""):
+        try:
+            ok = bool(fn())
+            detail = "condition not satisfied"
+        except Exception:
+            ok = False
+            detail = traceback.format_exc().strip().split("\n")[-1]
+        self.results.append((name, ok, detail, note))
+
     def report(self):
         for name, ok, detail, note in self.results:
             print(f"  {'pass' if ok else 'FAIL'}  {name}")
