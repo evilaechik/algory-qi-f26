@@ -16,6 +16,7 @@ class Checker:
         spec = importlib.util.spec_from_file_location("submission", path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
+        self.mod = module
         return module
 
     def check(self, name, fn, expected, tol=0.01, note=""):
@@ -36,6 +37,10 @@ class Checker:
             ok = False
             detail = traceback.format_exc().strip().split("\n")[-1]
         self.results.append((name, ok, detail, note))
+
+    def exists(self, name, attr, note=""):
+        ok = hasattr(self.mod, attr) and callable(getattr(self.mod, attr))
+        self.results.append((name, ok, f"missing callable: {attr}", note))
 
     def report(self):
         for name, ok, detail, note in self.results:
